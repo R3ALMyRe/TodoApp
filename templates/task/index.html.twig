@@ -1,0 +1,51 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des tâches{% endblock %}
+
+{% block body %}
+    <div class="container mt-5">
+        <h1>Liste des tâches</h1>
+
+        <a href="{{ path('task_new') }}" class="btn btn-primary mb-3">Créer une nouvelle tâche</a>
+
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Titre</th>
+                    <th>Description</th>
+                    <th>Statut</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for task in tasks %}
+                    <tr>
+                        <td>{{ task.title }}</td>
+                        <td>{{ task.description }}</td>
+                        <td>
+                            {% if task.status %}
+                                <span class="badge bg-success">Terminée</span>
+                            {% else %}
+                                <span class="badge bg-warning text-dark">En cours</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{{ path('task_edit', {'id': task.id}) }}" class="btn btn-info btn-sm">Modifier</a>
+                            
+
+                            {% if not task.status %}
+                                <a href="{{ path('task_mark_done', {'id': task.id}) }}" class="btn btn-primary btn-sm">Terminer</a>
+                            {% endif %}
+
+                            <!-- Formulaire de suppression -->
+                            <form action="{{ path('task_delete', {'id': task.id}) }}" method="post" class="d-inline" onsubmit="return confirm('Voulez-vous vraiment supprimer cette tâche ?');">
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ task.id) }}">
+                                <button type="submit" class="btn btn-danger btn-sm">Supprimer</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
